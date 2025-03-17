@@ -1,5 +1,5 @@
 pandas
-matplotlib.pyplot
+matplotlib
 seaborn
 streamlit
-format_currency
+babel
