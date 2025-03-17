@@ -45,7 +45,13 @@ def create_rfm_df(df):
     
     return rfm_df
 
-all_df = pd.read_csv("C:/Users/Aufar Raihan Rahmat/Downloads/Kuliah/Dioding/Proyek_Analisis_Data/all_data.csv")
+# URL raw dari GitHub
+csv_url = "https://raw.githubusercontent.com/username/repository/branch/path/to/dataset.csv"
+# Membaca dataset dari GitHub
+@st.cache_data  # Caching agar tidak download berulang kali
+def load_data(url):
+    return pd.read_csv(url)
+all_df = load_data(csv_url)
 all_df["order_approved_at"] = pd.to_datetime(all_df["order_approved_at"])
 
 datetime_columns = ["order_approved_at", "order_delivered_customer_date"]
