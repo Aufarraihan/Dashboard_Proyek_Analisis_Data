@@ -46,7 +46,7 @@ def create_rfm_df(df):
     return rfm_df
 
 # URL raw dari GitHub
-csv_url = "https://raw.githubusercontent.com/username/repository/branch/path/to/dataset.csv"
+csv_url = "https://raw.githubusercontent.com/Aufarraihan/Dashboard_Proyek_Analisis_Data/2c6ffd3e0d15a6e0f574b825e44a00634bfe4878/all_data.csv"
 # Membaca dataset dari GitHub
 @st.cache_data  # Caching agar tidak download berulang kali
 def load_data(url):
