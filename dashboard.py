@@ -5,27 +5,27 @@ import streamlit as st
 from babel.numbers import format_currency
 sns.set(style='dark')
 
-def create_daily_orders_df(df):
-    daily_orders_df = df.resample(rule='d', on='order_approved_at').agg({
+def create_monthly_orders_df(df):
+    monthly_orders_df = df.resample(rule='d', on='order_approved_at').agg({
         "order_id": "nunique",
         "price": "sum"
     })
-    daily_orders_df = daily_orders_df.reset_index()
-    daily_orders_df.rename(columns={
+    monthly_orders_df = monthly_orders_df.reset_index()
+    monthly_orders_df.rename(columns={
         "order_id": "order_count",
         "price": "revenue"
     }, inplace=True)
     
-    return daily_orders_df
+    return monthly_orders_df
 
 def create_sum_order_items_df(df):
     sum_order_items_df = df.groupby("product_category_name_english").price.sum().sort_values(ascending=False).reset_index()
     return sum_order_items_df
 
 def create_bystate_df(df):
-    bystate_df = df.groupby(by="customer_state").customer_id.nunique().reset_index()
+    bystate_df = df.groupby(by="customer_state").price.sum().reset_index()
     bystate_df.rename(columns={
-        "customer_id": "customer_count"
+        "price": "revenue"
     }, inplace=True)
     
     return bystate_df
@@ -79,7 +79,7 @@ with st.sidebar:
 
 main_df = all_df[(all_df["order_approved_at"] >= str(start_date)) & (all_df["order_approved_at"] <= str(end_date))]
 
-daily_orders_df = create_daily_orders_df(main_df)
+monthly_orders_df = create_monthly_orders_df(main_df)
 sum_order_items_df = create_sum_order_items_df(main_df)
 bystate_df = create_bystate_df(main_df)
 rfm_df = create_rfm_df(main_df)
@@ -100,8 +100,8 @@ with col2:
  
 fig, ax = plt.subplots(figsize=(16, 8))
 ax.plot(
-    daily_orders_df["order_approved_at"],
-    daily_orders_df["order_count"],
+    monthly_orders_df["order_approved_at"],
+    monthly_orders_df["order_count"],
     marker='o', 
     linewidth=2,
     color="#90CAF9"
@@ -140,13 +140,15 @@ st.subheader("Customer Demographics")
 
 fig, ax = plt.subplots(figsize=(20, 10))
 colors = ["#90CAF9", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
-sns.barplot(
-    x="customer_count", 
+barplot = sns.barplot(
+    x="revenue", 
     y="customer_state",
     data=bystate_df.sort_values(by="customer_count", ascending=False),
     palette=colors,
     ax=ax
 )
+for container in barplot.containers:
+    barplot.bar_label(container, fmt="%d", fontsize=16, padding=3)
 ax.set_title("Number of Customer by States", loc="center", fontsize=30)
 ax.set_ylabel(None)
 ax.set_xlabel(None)
@@ -191,7 +193,9 @@ ax[1].tick_params(axis='x', labelsize=35)
 ax[1].set_xticks(ax[1].get_xticks()) 
 ax[1].set_xticklabels(ax[1].get_xticklabels(), rotation=315, ha="left")
  
-sns.barplot(y="monetary", x="customer_id", data=rfm_df.sort_values(by="monetary", ascending=False).head(5), palette=colors, ax=ax[2])
+barplot = sns.barplot(y="monetary", x="customer_id", data=rfm_df.sort_values(by="monetary", ascending=False).head(5), palette=colors, ax=ax[2])
+for container in barplot.containers:
+    barplot.bar_label(container, fmt="%.0f", fontsize=20, padding=3)
 ax[2].set_ylabel(None)
 ax[2].set_xlabel("customer_id", fontsize=30)
 ax[2].set_title("By Monetary", loc="center", fontsize=50)
