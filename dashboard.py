@@ -6,7 +6,7 @@ from babel.numbers import format_currency
 sns.set(style='dark')
 
 def create_monthly_orders_df(df):
-    monthly_orders_df = df.resample(rule='d', on='order_approved_at').agg({
+    monthly_orders_df = df.resample(rule='m', on='order_approved_at').agg({
         "order_id": "nunique",
         "price": "sum"
     })
