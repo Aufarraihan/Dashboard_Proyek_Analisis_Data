@@ -119,14 +119,18 @@ fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(35, 15))
  
 colors = ["#90CAF9", "#D3D3D3", "#D3D3D3", "#D3D3D3", "#D3D3D3"]
  
-sns.barplot(x="price", y="product_category_name_english", data=sum_order_items_df.head(5), palette=colors, ax=ax[0])
+best_plot = sns.barplot(x="price", y="product_category_name_english", data=sum_order_items_df.head(5), palette=colors, ax=ax[0])
+for container in best_plot.containers:
+    best_plot.bar_label(container, fmt="%d", fontsize=16, padding=3)
 ax[0].set_ylabel(None)
 ax[0].set_xlabel("Number of Sales", fontsize=30)
 ax[0].set_title("Best Performing Product", loc="center", fontsize=50)
 ax[0].tick_params(axis='y', labelsize=35)
 ax[0].tick_params(axis='x', labelsize=30)
  
-sns.barplot(x="price", y="product_category_name_english", data=sum_order_items_df.sort_values(by="price", ascending=True).head(5), palette=colors, ax=ax[1])
+worst_plot = sns.barplot(x="price", y="product_category_name_english", data=sum_order_items_df.sort_values(by="price", ascending=True).head(5), palette=colors, ax=ax[1])
+for container in worst_plot.containers:
+    worst_plot.bar_label(container, fmt="%d", fontsize=16, padding=3)
 ax[1].set_ylabel(None)
 ax[1].set_xlabel("Number of Sales", fontsize=30)
 ax[1].invert_xaxis()
