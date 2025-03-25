@@ -106,6 +106,8 @@ ax.plot(
     linewidth=2,
     color="#90CAF9"
 )
+for x, y in zip(monthly_orders_df["order_approved_at"], monthly_orders_df["order_count"]):
+    plt.text(x, y, str(y), fontsize=10, ha='center', va='bottom')
 ax.tick_params(axis='y', labelsize=20)
 ax.tick_params(axis='x', labelsize=15)
  
